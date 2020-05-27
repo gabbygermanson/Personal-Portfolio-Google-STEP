@@ -15,14 +15,14 @@
 /**
  * Adds a random greeting to the page.
  */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+function addRandomFact() {
+  const funFacts =
+      ["I enjoy all music genres especially EDM!", "I studied abroad in Barcelona :)", "My favorite food is rotisserie chicken.", "I spend a lot of days on the lake."];
 
   // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+  const fact = funFacts[Math.floor(Math.random() * funFacts.length)];
 
   // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+  const factContainer = document.getElementById('fact-container');
+  factContainer.innerText = fact;
 }
