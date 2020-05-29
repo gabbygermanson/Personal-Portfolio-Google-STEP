@@ -7,3 +7,23 @@
 #fact-container {
   margin-top: 20px;
 }
+
+p.padded {
+ padding-top:10px;
+}
+
+img[src="/images/workspace.jpg"] {
+  max-width: 50%;
+  height: auto;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.textalign {
+    text-align: center
+}
