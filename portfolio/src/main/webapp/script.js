@@ -13,16 +13,11 @@
 // limitations under the License.
 
 /**
- * Adds a random fact to the page.
+ * Using fetch by async and await keywords allowing the return values
+ * directly instead of going through Promises.
  */
-function addRandomFact() {
-  const funFacts =
-      ["I enjoy all music genres especially EDM!", "I studied abroad in Barcelona :)", "My favorite food is rotisserie chicken!", "I spend a lot of days on the lake!"];
-
-  // Pick a random fact.
-  const fact = funFacts[Math.floor(Math.random() * funFacts.length)];
-
-  // Add it to the page.
-  const factContainer = document.getElementById('fact-container');
-  factContainer.innerText = fact;
+async function getFunFact() {
+  const response = await fetch('/funfact');
+  const fact = await response.text();
+  document.getElementById('fact-container').innerText = fact;
 }
