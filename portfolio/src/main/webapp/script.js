@@ -22,7 +22,7 @@
 
 
 /** Fetches data from the servers and adds them to the DOM.*/
-function getServerData(funFactTrigger) {
+function getFunFact(funFactTrigger) {
     fetch('/data').then(response => response.json()).then((allData) => {
     // allData is an object, not a string
 
