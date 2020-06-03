@@ -21,7 +21,9 @@
 // }
 
 
-/** Fetches data from the servers and adds them to the DOM.*/
+/** Fetches data from the servers and adds them to the DOM.
+    funFactTrigger was used when two places in index.HTML called this method so this parameter
+    shows which place called it to distribute data properly*/
 function getFunFact(funFactTrigger) {
     fetch('/data').then(response => response.json()).then((allData) => {
     // allData is an object, not a string
