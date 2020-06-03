@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns a random quote. */
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
-  private int hardCodedNumFacts = 4;
+  private static final int hardCodedNumFacts = 4;
 
 //   @Override
 //   public void init() {
