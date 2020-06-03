@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns a random quote. */
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
-  private List<String> data;
   private int hardCodedNumFacts = 4;
 
 //   @Override
@@ -36,7 +35,7 @@ public final class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    data = new ArrayList<>();
+    List<String> data = new ArrayList<>();
 
     data.add("I enjoy all music genres especially EDM!");
     data.add("I studied abroad in Barcelona :)");
