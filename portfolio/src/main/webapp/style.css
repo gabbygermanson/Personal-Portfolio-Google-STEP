@@ -1,9 +1,12 @@
-#content {
   width: 500px;
   margin-left: 200px;
 }
 
 #fact-container {
+  margin-top: 20px;
+}
+
+#commentHistory {
   margin-top: 20px;
 }
 

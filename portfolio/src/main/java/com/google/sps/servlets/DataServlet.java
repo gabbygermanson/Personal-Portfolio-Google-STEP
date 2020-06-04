@@ -1,4 +1,3 @@
-// Copyright 2019 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,54 +25,57 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns a random quote. */
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
-  private static final int hardCodedNumFacts = 4;
-
-//   @Override
-//   public void init() {
-//       One time initialization
-//   }
-
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<String> data = new ArrayList<>();
-
-    data.add("I enjoy all music genres especially EDM!");
-    data.add("I studied abroad in Barcelona :)");
-    data.add("My favorite food is rotisserie chicken!");
-    data.add("I spend a lot of days on the lake!");
     
-    data.add("LGTM!");
-    data.add("I'd change the website spacing.");
-    data.add("A task bar would be great to add.");
+    private List<String> funFacts = new ArrayList<>();
+    private List<String> pastComments = new ArrayList<>(); 
+    private List<String> factsAndComments;
 
-    String fact = data.get((int) (Math.random() * hardCodedNumFacts));
-
-    int factsDeleted = 0;
-    int index = 0;
-    while (factsDeleted != hardCodedNumFacts - 1) {
-        if ((data.get(index)).equals(fact)) {
-            index++;            
-        } else {
-            data.remove(index);
-            factsDeleted++; 
-            if (factsDeleted == hardCodedNumFacts - 1) {
-                break;
-            }            
-        }
+    /** One time hardcode initialization of fun facts. */
+    @Override
+    public void init() {
+        funFacts.add("I enjoy all music genres especially EDM!");
+        funFacts.add("I studied abroad in Barcelona :)");
+        funFacts.add("My favorite food is rotisserie chicken!");
+        funFacts.add("I spend a lot of days on the lake!");
     }
 
-    String jsonData = toJsonUsingGson(data);
-    response.setContentType("application/json;");
-    response.getWriter().println(jsonData);
-  }
+    /** Merges dataFactsAndComments with pastComments to convert as one ArrayList into JSON to put on servlet. */
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        factsAndComments =  new ArrayList<>();
+        factsAndComments.addAll(funFacts);
+        factsAndComments.addAll(pastComments);
 
-  /**
-   * Converts dataArray instance into JSON string using Gson library dependency in pom.xml
-   */
-  private String toJsonUsingGson(List<String> dataArray) {
-    Gson gson = new Gson();
-    String json = gson.toJson(dataArray);
-    return json;
-  }
+        String jsonData = toJsonUsingGson(factsAndComments);
+        response.setContentType("application/json;");
+        response.getWriter().println(jsonData);
+    }
+
+    /** Converts Arraylist of data into JSON string using Gson library dependency in pom.xml. */
+    private String toJsonUsingGson(List<String> data) {
+        Gson gson = new Gson();
+        String json = gson.toJson(data);
+        return json;
+    }
+
+    /** Process POST request form input, add to pastCommens, and redirect to index.html */
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // Get the input from the form.
+        String comment = getParameter(request, "text-input", "");
+        pastComments.add(0, comment);
+
+        response.sendRedirect("/index.html");
+    }
+
+    /** Gets form input of specified type
+    * @return request parameter or default value if parameter was not specified by client */
+    private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+        String value = request.getParameter(name);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
+    }
 
 }

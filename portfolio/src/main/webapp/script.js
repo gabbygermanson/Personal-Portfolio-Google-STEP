@@ -1,4 +1,3 @@
-// Copyright 2019 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,27 +19,44 @@
 //   document.getElementById('fact-container').innerText = fact;
 // }
 
+/** Fetches and parses DataServlet data to add to DOM by calling desired function call 
+*@param funFactTrigger boolean specifying whether method will make function call to add a fun fact or site comment */
+function fetchFactsComments(funFactTrigger) {
+    fetch('/data').then(response => response.json()).then((allFactsComments) => {
+        // allFactsComments is a JSON object ArraryList of ArrayList and no longer a JSON string
+        console.log("All facts and comments fetched: " + allFactsComments);
 
-/** Fetches data from the servers and adds them to the DOM.
-    funFactTrigger was used when two places in index.HTML called this method so this parameter
-    shows which place called it to distribute data properly*/
-function getFunFact(funFactTrigger) {
-    fetch('/data').then(response => response.json()).then((allData) => {
-    // allData is an object, not a string
+        var funFacts = allFactsComments.slice(0, 4);
+        console.log("Funfacts: " + funFacts);
 
-    if (funFactTrigger) {
-        document.getElementById('fact-container').innerText = allData[0];
-    } else {
-        const commentsListElement = document.getElementById('comments-container');
-        commentsListElement.innerHTML = '';
-        commentsListElement.appendChild(createListElement(allData[1]));
-        commentsListElement.appendChild(createListElement(allData[2]));
-        commentsListElement.appendChild(createListElement(allData[3]));
-    }
+        var comments = allFactsComments.slice(4);
+        console.log("Site comments: " + comments);
+
+        if (funFactTrigger) {
+            getFunFact(funFacts);
+        } else {
+            getComments(comments);
+        }
   });
 }
 
-/** Creates an <li> element containing text. */
+/** Random fun fact selected to be added to index.html */
+function getFunFact(facts) {
+    fact = facts[Math.floor((Math.random() * facts.length))];
+    console.log("Random fact is " + fact);
+    
+    document.getElementById('fact-container').innerText = fact;
+}
+
+/** Builds Unordered List of site comment history */
+function getComments(siteComments) {
+    const historyUL = document.getElementById('commentHistory');
+    siteComments.forEach((line) => {
+        historyUL.appendChild(createListElement(line));
+    });
+}
+
+/** Creates an <li> list item element containing text. */
 function createListElement(text) {
   const liElement = document.createElement('li');
   liElement.innerText = text;
