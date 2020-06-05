@@ -11,19 +11,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** When content was HTML: Fetch with async and await keywords allowing the return values
- * directly instead of going through Promises. */
-// async function getFunFact() {
-//   const response = await fetch('/data');
-//   const fact = await response.text();
-//   document.getElementById('fact-container').innerText = fact;
-// }
 
 /** Fetches and parses DataServlet data to add to DOM by calling desired function call 
 *@param funFactTrigger boolean specifying whether method will make function call to add a fun fact or site comment */
 function fetchFactsComments(funFactTrigger) {
     fetch('/data').then(response => response.json()).then((allFactsComments) => {
-        // allFactsComments is a JSON object ArraryList of ArrayList and no longer a JSON string
+        // allFactsComments is a JSON object ArraryList of first facts then site comments
         console.log("All facts and comments fetched: " + allFactsComments);
 
         var funFacts = allFactsComments.slice(0, 4);
