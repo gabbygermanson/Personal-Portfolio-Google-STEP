@@ -23,7 +23,6 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
     
-    /** One time initialization may use for future. */
+    /** One time initialization may be used for future. */
     // @Override
     // public void init() {
     // }
@@ -58,7 +57,6 @@ public final class DataServlet extends HttpServlet {
             pastComments.add(comment);
         }
 
-        
         List<String> factsAndComments =  new ArrayList<>();
         factsAndComments.addAll(funFacts);
         factsAndComments.addAll(pastComments);
@@ -67,7 +65,6 @@ public final class DataServlet extends HttpServlet {
         Gson gson = new Gson();
         response.getWriter().println(gson.toJson(factsAndComments));
     }
-
 
     /** Process POST request form input, add to pastComments, and redirect to index.html */
     @Override
