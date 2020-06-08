@@ -5,12 +5,12 @@
         <link rel="stylesheet" href="style.css">
         <script src="script.js"></script>
     </head>
-
+ 
     <body onload="fetchFactsComments(0)">
-
+ 
     <div id="content">
         <div class="text-container">
-
+ 
         <div><h1>Gabrielle's Portfolio</h1></div>
         <a href="index.html">About Me</li>
         <br>
@@ -22,9 +22,9 @@
         <a href="https://linkedin.com/in/gabrielle-germanson">My LinkedIn</a>
         <br> 
         <a href="https://github.com/gabbygermanson">My GitHub</a>
-
+ 
         <div class="mainImages"><img src="/images/rsz_1gabbyvalencia.jpg"/></div>
-
+ 
         <p>Hello! I am a STEP intern on the Seattle Geo Core Maps team and a rising junior at Georgia Tech. I'm working from my home in the suburbs of Minneapolis, MN.</p>
         
         <br>
@@ -32,25 +32,29 @@
         <p>Click here to get a random fun fact:</p>
         <button onclick="fetchFactsComments(1)" class="myButton">Generate</button>
         <div id="fact-container"></div>
-
+ 
         <br>
         <br>
         <p class="thorText">The confidence roller-coaster of Computer Science...</p>
         <div class="mainImages"><img src="/images/thor.jpg"/></div>
-
+ 
         <form method="POST" action="/data">
             <p>Make a Site Comment:</p>
             <textarea name="text-input">Write comment here</textarea>
+            
+            <p>How Many Past Comments Would You Like to See?</p>
+            <input type="number" name="num-comments" min="0" value ="0">
+            <br/><br/>
             <input type="submit"/>
         </form> 
         <div>
             <p>Site Comments:</p>
             <ul id="commentHistory"></ul>
         </div>
-
+ 
         </div>
     </div>
-
+ 
     </body>
-
+ 
 </html>
