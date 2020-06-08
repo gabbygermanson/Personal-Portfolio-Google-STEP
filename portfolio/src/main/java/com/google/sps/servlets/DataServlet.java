@@ -10,7 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
- 
+
 package com.google.sps.servlets;
  
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -32,11 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
  
-    /** Declared as class variable so that initialization happens once in init()
-        rather than everytime in doGET() */
     List<String> funFacts = new ArrayList<>();
     
-    /** One time initialization. */
+    /** Sets up set of fun facts that will be displayed to site users. */
     @Override
     public void init() {
         funFacts.add("I enjoy all music genres especially EDM!");
@@ -57,27 +55,30 @@ public final class DataServlet extends HttpServlet {
         PreparedQuery results = datastore.prepare(query);
  
         List<String> pastComments = new ArrayList<>();
-        int validNumRequest = 0;
-        int numCommentsWanted = 0;
-        boolean numCommentsWantedTrigger = true;
  
         for (Entity entity : results.asIterable()) {
-            validNumRequest = Integer.parseInt((String)(entity.getProperty("seeNumComments")));
-            if (validNumRequest >= 0){
+            // validNumInput specifies if the form input for number of comments wanted is valid
+                // (meaning >= 0). If not, then the comment entered in that entity won't be shown on the site.
+            int validNumInput = 0;
+            int numCommentsWanted = 0;
+            boolean setNumCommentsWanted = true;            
+            validNumInput = Integer.parseInt((String)(entity.getProperty("seeNumComments")));
+            
+            if (validNumInput >= 0) {
                 String comment = (String) (entity.getProperty("newComment"));
 
-                //For testing queried result comments
-                // System.out.println("Query result comment: " + comment);
+                // For testing queried result comments
+                //System.out.println("Query result comment: " + comment);
 
                 pastComments.add(comment);
             } else {
-                System.out.println("Input of number comments wanted not greater than or equal to 0: " + validNumRequest);
+                System.out.println("Number of comments wanted is not greater than or equal to 0: " + validNumInput);
             }
            
-            //Grab number of comments wanted to be seen by user only in the first entity
-            while (numCommentsWantedTrigger) {
-                numCommentsWanted = validNumRequest;
-                numCommentsWantedTrigger = false;
+            // Grab number of comments wanted to be seen by user only in the first entity
+            if (numCommentsWantedTrigger) {
+                numCommentsWanted = validNumInput;
+                setNumCommentsWanted = false;
             }
         }
  
@@ -88,9 +89,9 @@ public final class DataServlet extends HttpServlet {
         pastComments = pastComments.subList(0, numCommentsWanted);
 
         // For testing proper number and right comments are in sublist
-        // for (String comment : pastComments) {
-        //     System.out.println("sublist comment: " + comment);
-        // }
+        //for (String comment : pastComments) {
+        //    System.out.println("sublist comment: " + comment);
+        //}
 
         factsAndComments.addAll(pastComments);
  
@@ -124,7 +125,7 @@ public final class DataServlet extends HttpServlet {
     private String getParameter(HttpServletRequest request, String name, String defaultValue) {
         String value = request.getParameter(name);
         if (value == null) {
-            System.out.println("Could not convert number comments wanted input to int: " + value);
+            System.out.println("No input received for wanted number of site comments.");
             return defaultValue;
         }
         return value;

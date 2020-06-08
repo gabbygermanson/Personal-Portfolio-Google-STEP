@@ -19,7 +19,7 @@ function fetchFactsComments(funFactTrigger) {
         // allFactsComments is a JSON object ArraryList of first facts then site comments
         console.log("All facts and comments fetched: " + allFactsComments);
  
-        //Split allFactsComments into proper sub-arrays of either fun facts or comments for next funciton call
+        // Split allFactsComments into proper sub-arrays of either fun facts or comments for next funciton call
         var funFacts = allFactsComments.slice(0, 4);
         console.log("Funfacts: " + funFacts);
  
