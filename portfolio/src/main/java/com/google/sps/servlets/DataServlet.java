@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
  
-/** Servlet that returns a random quote. */
+/** Servlet that takes in form input and returns fun facts and site comments. */
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
  
@@ -107,8 +107,9 @@ public final class DataServlet extends HttpServlet {
         response.sendRedirect("/index.html");
     }
  
-    /** Gets form input of certain name (type). No form input converts to default (ex: No number input handled as 0 comments wanted.)
-    * Number input will be none or be >= 0 due to HTML form restrictions.
+    /** Gets certain name (type) form input. 
+    * No form input converts to default (ex: No number input is handled as 0 comments wanted.)
+    * Number input will be none or >= 0 due to HTML form restrictions.
     * @return request parameter or default value if parameter was not specified by client */
     private String getParameter(HttpServletRequest request, String name, String defaultValue) {
         String value = request.getParameter(name);
