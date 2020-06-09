@@ -56,8 +56,8 @@ public final class DataServlet extends HttpServlet {
  
         List<String> pastComments = new ArrayList<>();
  
-        int desiredNumCommentsFound = 0;
-        boolean setNumCommentsWanted = false;
+        int numCommentsWanted = 0;
+        boolean desiredNumCommentsFound = false;
         for (Entity entity : results.asIterable()) {
             String comment = (String) (entity.getProperty("newComment"));
             pastComments.add(comment);
