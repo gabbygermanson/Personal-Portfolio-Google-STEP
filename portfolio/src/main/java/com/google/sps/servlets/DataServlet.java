@@ -56,18 +56,17 @@ public final class DataServlet extends HttpServlet {
  
         List<String> pastComments = new ArrayList<>();
  
+        int numCommentsWanted = 0;
+        boolean setNumCommentsWanted = true;
         for (Entity entity : results.asIterable()) {
-            int numCommentsWanted = 0;
-            boolean setNumCommentsWanted = true;  
-            
-            // Grab number of comments wanted to be seen by user only in the first entity
-            if (numCommentsWantedTrigger) {
-                numCommentsWanted = validNumInput;
-                setNumCommentsWanted = false;
-            }          
-            
             String comment = (String) (entity.getProperty("newComment"));
             pastComments.add(comment);
+
+            // Grab number of comments wanted to be seen by user only in the first entity
+            if (setNumCommentsWanted) {
+                numCommentsWanted = Integer.parseInt((String)(entity.getProperty("seeNumComments")));
+                setNumCommentsWanted = false;
+            }   
         }
  
         if (numCommentsWanted > pastComments.size()) {
@@ -97,26 +96,19 @@ public final class DataServlet extends HttpServlet {
         String comment = getParameter(request, "text-input", ""); 
         String numCommentsString = getParameter(request, "num-comments", "0");
 
-        // validNumInput specifies if the form input for number of comments wanted is valid
-            // (meaning >= 0). If not, then the comment entered in that entity won't be shown on the site. 
-        int validNumInput = Integer.parseInt(numCommentsString);
+        Entity commentEntity = new Entity("siteComments");
+        commentEntity.setProperty("timeStamp", timestamp);
+        commentEntity.setProperty("newComment", comment);
+        commentEntity.setProperty("seeNumComments", numCommentsString);
 
-        if (validNumInput >= 0) {
-            Entity commentEntity = new Entity("siteComments");
-            commentEntity.setProperty("timeStamp", timestamp);
-            commentEntity.setProperty("newComment", comment);
-            commentEntity.setProperty("seeNumComments", numCommentsString);
-    
-            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            datastore.put(commentEntity);
-        } else {
-            System.out.println("Number of comments wanted is not greater than or equal to 0: " + validNumInput);
-        }
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(commentEntity);
 
         response.sendRedirect("/index.html");
     }
  
-    /** Gets form input of specified type
+    /** Gets form input of certain name (type). No form input converts to default (ex: No number input handled as 0 comments wanted.)
+    * Number input will be none or be >= 0 due to HTML form restrictions.
     * @return request parameter or default value if parameter was not specified by client */
     private String getParameter(HttpServletRequest request, String name, String defaultValue) {
         String value = request.getParameter(name);

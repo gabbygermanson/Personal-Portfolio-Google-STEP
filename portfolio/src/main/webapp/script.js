@@ -59,3 +59,15 @@ function createListElement(text) {
   liElement.innerText = text;
   return liElement;
 }
+
+/** Removes any current li elements on the page and fetches DeleteDataServlet to rid Datastore data. */
+async function deleteComments() {    
+    var list = document.getElementById("commentHistory");
+
+    // As long as <ul> has a child node, remove it
+    while (list.hasChildNodes()) {
+        list.removeChild(list.firstChild);
+    }
+    let response = await fetch('/delete-data', {method: 'POST'});
+    fetchFactsComments(0);
+}
