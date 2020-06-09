@@ -57,29 +57,17 @@ public final class DataServlet extends HttpServlet {
         List<String> pastComments = new ArrayList<>();
  
         for (Entity entity : results.asIterable()) {
-            // validNumInput specifies if the form input for number of comments wanted is valid
-                // (meaning >= 0). If not, then the comment entered in that entity won't be shown on the site.
-            int validNumInput = 0;
             int numCommentsWanted = 0;
-            boolean setNumCommentsWanted = true;            
-            validNumInput = Integer.parseInt((String)(entity.getProperty("seeNumComments")));
+            boolean setNumCommentsWanted = true;  
             
-            if (validNumInput >= 0) {
-                String comment = (String) (entity.getProperty("newComment"));
-
-                // For testing queried result comments
-                //System.out.println("Query result comment: " + comment);
-
-                pastComments.add(comment);
-            } else {
-                System.out.println("Number of comments wanted is not greater than or equal to 0: " + validNumInput);
-            }
-           
             // Grab number of comments wanted to be seen by user only in the first entity
             if (numCommentsWantedTrigger) {
                 numCommentsWanted = validNumInput;
                 setNumCommentsWanted = false;
-            }
+            }          
+            
+            String comment = (String) (entity.getProperty("newComment"));
+            pastComments.add(comment);
         }
  
         if (numCommentsWanted > pastComments.size()) {
@@ -108,15 +96,23 @@ public final class DataServlet extends HttpServlet {
         // Get the input from the form.
         String comment = getParameter(request, "text-input", ""); 
         String numCommentsString = getParameter(request, "num-comments", "0");
- 
-        Entity commentEntity = new Entity("siteComments");
-        commentEntity.setProperty("timeStamp", timestamp);
-        commentEntity.setProperty("newComment", comment);
-        commentEntity.setProperty("seeNumComments", numCommentsString);
- 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(commentEntity);
- 
+
+        // validNumInput specifies if the form input for number of comments wanted is valid
+            // (meaning >= 0). If not, then the comment entered in that entity won't be shown on the site. 
+        int validNumInput = Integer.parseInt(numCommentsString);
+
+        if (validNumInput >= 0) {
+            Entity commentEntity = new Entity("siteComments");
+            commentEntity.setProperty("timeStamp", timestamp);
+            commentEntity.setProperty("newComment", comment);
+            commentEntity.setProperty("seeNumComments", numCommentsString);
+    
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            datastore.put(commentEntity);
+        } else {
+            System.out.println("Number of comments wanted is not greater than or equal to 0: " + validNumInput);
+        }
+
         response.sendRedirect("/index.html");
     }
  
@@ -125,7 +121,7 @@ public final class DataServlet extends HttpServlet {
     private String getParameter(HttpServletRequest request, String name, String defaultValue) {
         String value = request.getParameter(name);
         if (value == null) {
-            System.out.println("No input received for wanted number of site comments.");
+            System.out.println("No input received for " + name + ".");
             return defaultValue;
         }
         return value;
