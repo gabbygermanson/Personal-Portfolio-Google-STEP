@@ -10,21 +10,25 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-
+ 
+ 
 /** Fetches and parses DataServlet data to add to DOM by calling desired function call 
 *@param funFactTrigger boolean specifying whether method will make function call to add a fun fact or site comment */
 function fetchFactsComments(funFactTrigger) {
     fetch('/data').then(response => response.json()).then((allFactsComments) => {
         // allFactsComments is a JSON object ArraryList of first facts then site comments
         console.log("All facts and comments fetched: " + allFactsComments);
-
+ 
+        // Split allFactsComments into proper sub-arrays of either fun facts or comments for next funciton call
         var funFacts = allFactsComments.slice(0, 4);
         console.log("Funfacts: " + funFacts);
-
-        var comments = allFactsComments.slice(4);
-        console.log("Site comments: " + comments);
-
+ 
+        var comments = [];
+        if (allFactsComments.length > 4) {
+            var comments = allFactsComments.slice(4);
+            console.log("Site comments: " + comments);
+        }
+            
         if (funFactTrigger) {
             getFunFact(funFacts);
         } else {
@@ -32,7 +36,7 @@ function fetchFactsComments(funFactTrigger) {
         }
   });
 }
-
+ 
 /** Random fun fact selected to be added to index.html */
 function getFunFact(facts) {
     fact = facts[Math.floor((Math.random() * facts.length))];
@@ -40,7 +44,7 @@ function getFunFact(facts) {
     
     document.getElementById('fact-container').innerText = fact;
 }
-
+ 
 /** Builds Unordered List of site comment history */
 function getComments(siteComments) {
     const historyUL = document.getElementById('commentHistory');
@@ -48,7 +52,7 @@ function getComments(siteComments) {
         historyUL.appendChild(createListElement(line));
     });
 }
-
+ 
 /** Creates an <li> list item element containing text. */
 function createListElement(text) {
   const liElement = document.createElement('li');
