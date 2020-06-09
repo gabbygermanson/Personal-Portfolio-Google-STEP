@@ -56,16 +56,16 @@ public final class DataServlet extends HttpServlet {
  
         List<String> pastComments = new ArrayList<>();
  
-        int numCommentsWanted = 0;
-        boolean setNumCommentsWanted = true;
+        int desiredNumCommentsFound = 0;
+        boolean setNumCommentsWanted = false;
         for (Entity entity : results.asIterable()) {
             String comment = (String) (entity.getProperty("newComment"));
             pastComments.add(comment);
 
             // Grab number of comments wanted to be seen by user only in the first entity
-            if (setNumCommentsWanted) {
+            if (!desiredNumCommentsFound) {
                 numCommentsWanted = Integer.parseInt((String)(entity.getProperty("seeNumComments")));
-                setNumCommentsWanted = false;
+                desiredNumCommentsFound = true;
             }   
         }
  
