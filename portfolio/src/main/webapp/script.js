@@ -74,6 +74,6 @@ async function deleteComments() {
 
 /** Creates a map and adds it to the page. */
 function createMap() {
-  console.log("In craete map");
+  console.log("In create map");
   var map = new google.maps.Map(document.getElementById('map'), {center: {lat: 37.422, lng: -122.084}, zoom: 16});
 }
