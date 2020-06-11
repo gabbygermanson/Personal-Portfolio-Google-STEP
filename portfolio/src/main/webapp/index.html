@@ -2,7 +2,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Gabrielle's Portfolio</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="/style.css">
         <script src="script.js"></script>
     </head>
  
@@ -35,28 +35,43 @@
         <br>
 
         <h1>Countries I've Been To</h2>
-        <h3>Through trips for: service, band, Spanish, study abroad!</h3>
+        <p><i>For service, band, Spanish, and study abroad!</i></p>
+        <div>
+            <button class="myButton" onclick="myHomeTown()">My Home Town</button>
+            <button class="myButton" onclick="serviceCountry()">Service Trip</button>
+            <button class="myButton" onclick="bandTourCounty()">Wind Ensemble Tour</button>
+            <button class="myButton" onclick="hostCountry()">Spanish Host Family</button>
+            <button class="myButton" onclick="studyAbroadMarkers()">Barcelona Study Abroad</button>
+        </div>
+        <br>
+        <div>
+            <button class="deleteButton" onclick="clearAllMarkers()">Clear Markers</button>
+        </div>
         <div id="map"></div>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtqf-TDvu363fF63gLIJG62LU-4Mdu7Ss&callback=createMap"
-        async defer></script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtqf-TDvu363fF63gLIJG62LU-4Mdu7Ss&callback=createMap"></script>
+        <br>
+        <br>
         <br>
 
         <p class="thorText">The confidence roller-coaster of Computer Science...</p>
         <div class="mainImages"><img src="/images/thor.jpg"/></div>
- 
+        <br>
+        <br>
+        <br>
         <form method="POST" action="/data">
             <p>Make a Site Comment:</p>
             <textarea name="text-input">Write comment here</textarea>
             
             <p>How Many Past Comments Would You Like to See?</p>
             <input type="number" name="num-comments" min="0" value ="0">
-            <br/><br/>
+            <br/>
             <input type="submit"/>
         </form> 
+
         <div>
             <p>Site Comments:</p>
             <ul id="commentHistory"></ul>
-            <button onclick="deleteComments()" class="myButton">Delete Comments</button>
+            <button class="deleteButton" onclick="deleteComments()">Delete Comments</button>
         </div>
         </div>
     </div>
