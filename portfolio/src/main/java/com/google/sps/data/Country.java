@@ -25,4 +25,16 @@ public class Country {
     this.lat = latitude;
     this.lng = longitude;
   }
+
+  public String getName() {
+      return name;
+  }
+
+  public double getLat() {
+      return lat;
+  }
+
+  public double getLng() {
+      return lng;
+  }
 }

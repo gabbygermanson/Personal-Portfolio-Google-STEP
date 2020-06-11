@@ -35,11 +35,15 @@ public class StudyAbroadServlet extends HttpServlet {
   public void init() {
     studyAbroad = new ArrayList<>();
 
+    // The scanner reads in data from a CSV file line by line
     Scanner scanner = new Scanner(getServletContext().getResourceAsStream("/WEB-INF/studyAbroadCountries.csv"));
+    
+    // While there is still another line of data in the CSV file, read in the line and split it by commas
     while (scanner.hasNextLine()) {
       String line = scanner.nextLine();
       String[] cells = line.split(",");
 
+      // The split string parst are parsed to their proper types to then call a constructor for a new Country object
       String name = cells[0];
       double lat = Double.parseDouble(cells[1]);
       double lng = Double.parseDouble(cells[2]);
