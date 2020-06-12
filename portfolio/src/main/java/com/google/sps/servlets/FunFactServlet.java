@@ -23,8 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
  
 /** Servlet that prints fun facts. */
-@WebServlet("/data")
-public final class DataServlet extends HttpServlet {
+@WebServlet("/funfacts")
+public final class FunFactServlet extends HttpServlet {
  
     List<String> funFacts = new ArrayList<>();
     

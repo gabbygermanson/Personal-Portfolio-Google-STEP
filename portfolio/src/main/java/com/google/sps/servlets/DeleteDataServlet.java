@@ -20,10 +20,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.gson.Gson;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -36,8 +33,9 @@ public final class DeleteDataServlet extends HttpServlet {
     /** Delete data in Datastore and redirect to index.html */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("INSIDE delete POST");
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("siteComments").addSort("timeStamp", SortDirection.DESCENDING);
+        Query query = new Query("siteComments").addSort("timeSubmitted", SortDirection.DESCENDING);
         PreparedQuery results = datastore.prepare(query);
 
         for (Entity entity : results.asIterable()) {
