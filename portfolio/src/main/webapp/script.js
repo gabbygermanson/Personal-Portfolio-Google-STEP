@@ -33,13 +33,15 @@ function fetchFactsComments(funFactTrigger) {
 }
  
 /** Random fun fact selected to be added to index.html */
-function getFunFact(facts) {
-    fact = facts[Math.floor((Math.random() * facts.length))];    
-    document.getElementById('fact-container').innerText = fact;
+function getFunFact() {
+    fetch('/data').then(response => response.json()).then((allFunFacts) => {   
+        fact = allFunFacts[Math.floor((Math.random() * allFunFacts.length))];    
+        document.getElementById('fact-container').innerText = fact;
+    });
 }
  
 /** Builds Unordered List of site comment history */
-function getComments(siteComments) {
+function getComments() {
     const historyUL = document.getElementById('commentHistory');
     siteComments.forEach((line) => {
         historyUL.appendChild(createListElement(line));

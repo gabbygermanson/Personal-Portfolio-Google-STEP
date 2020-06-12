@@ -13,12 +13,6 @@
 
 package com.google.sps.servlets;
  
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,13 +22,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
  
-/** Servlet that takes in form input and returns fun facts and site comments. */
+/** Servlet that prints fun facts. */
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
  
     List<String> funFacts = new ArrayList<>();
     
-    /** Sets up set of fun facts that will be displayed to site users. */
+    /** Sets up set of fun facts. */
     @Override
     public void init() {
         funFacts.add("I enjoy all music genres especially EDM!");
@@ -43,81 +37,12 @@ public final class DataServlet extends HttpServlet {
         funFacts.add("I spend a lot of days on the lake!");
     }
  
-    /** Merges dataFactsAndComments with pastComments to convert as one ArrayList into JSON to put on servlet. */
+    /** Converts funFacts ArrayList into JSON to print on servlet. */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {        
-        // Add fun facts first to factsAndComments return variable.
-        List<String> factsAndComments = new ArrayList<>();
-        factsAndComments.addAll(funFacts);        
-        
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("siteComments").addSort("timeStamp", SortDirection.DESCENDING);
-        PreparedQuery results = datastore.prepare(query);
- 
-        List<String> pastComments = new ArrayList<>();
- 
-        int numCommentsWanted = 0;
-        boolean desiredNumCommentsFound = false;
-        for (Entity entity : results.asIterable()) {
-            String comment = (String) (entity.getProperty("newComment"));
-            pastComments.add(comment);
-
-            // Grab number of comments wanted to be seen by user only in the first entity
-            if (!desiredNumCommentsFound) {
-                numCommentsWanted = Integer.parseInt((String)(entity.getProperty("seeNumComments")));
-                desiredNumCommentsFound = true;
-            }   
-        }
- 
-        if (numCommentsWanted > pastComments.size()) {
-            numCommentsWanted = pastComments.size();           
-        }
- 
-        pastComments = pastComments.subList(0, numCommentsWanted);
-
-        // For testing proper number and right comments are in sublist
-        //for (String comment : pastComments) {
-        //    System.out.println("sublist comment: " + comment);
-        //}
-
-        factsAndComments.addAll(pastComments);
- 
         response.setContentType("application/json;");
         Gson gson = new Gson();
-        response.getWriter().println(gson.toJson(factsAndComments));
-    }
- 
-    /** Process POST request form input, add to pastComments, and redirect to index.html */
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        long timestamp = System.currentTimeMillis();
-        
-        // Get the input from the form.
-        String comment = getParameter(request, "text-input", ""); 
-        String numCommentsString = getParameter(request, "num-comments", "0");
-
-        Entity commentEntity = new Entity("siteComments");
-        commentEntity.setProperty("timeStamp", timestamp);
-        commentEntity.setProperty("newComment", comment);
-        commentEntity.setProperty("seeNumComments", numCommentsString);
-
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(commentEntity);
-
-        response.sendRedirect("/index.html");
-    }
- 
-    /** Gets certain name (type) form input. 
-    * No form input converts to default (ex: No number input is handled as 0 comments wanted.)
-    * Number input will be none or >= 0 due to HTML form restrictions.
-    * @return request parameter or default value if parameter was not specified by client */
-    private String getParameter(HttpServletRequest request, String name, String defaultValue) {
-        String value = request.getParameter(name);
-        if (value == null) {
-            System.out.println("No input received for " + name + ".");
-            return defaultValue;
-        }
-        return value;
+        response.getWriter().println(gson.toJson(funFacts));
     }
  
 }

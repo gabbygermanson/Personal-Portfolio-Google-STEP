@@ -1,3 +1,26 @@
+<%--
+Copyright 2019 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+--%>
+
+<%-- Create Blobstore upload URL which will direct to --%>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
+<% BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+   String uploadUrl = blobstoreService.createUploadUrl("/my-form-handler"); %>
+
+
 <html>
     <head>
         <meta charset="UTF-8">
@@ -30,7 +53,7 @@
         <br>
         <h2>What Makes Me, ME!</h2>
         <p>Click here to get a random fun fact:</p>
-        <button onclick="fetchFactsComments(1)" class="myButton">Generate</button>
+        <button onclick="getFunFact()" class="myButton">Generate</button>
         <div id="fact-container"></div>
         <br>
 
@@ -58,15 +81,21 @@
         <br>
         <br>
         <br>
-        <form method="POST" action="/data">
-            <p>Make a Site Comment:</p>
+        <form method="POST" action="<%= uploadUrl %>" enctype="multipart/form-data">
+            
+            <p>Here is the uploadUrl created by Blobstore: <%= uploadUrl %></p>
+            <p>Post a Site Comment with a Corresponding Image:</p>
             <textarea name="text-input">Write comment here</textarea>
+            <p>Upload an image:</p>
+            <input type="file" name="image">
             
             <p>How Many Past Comments Would You Like to See?</p>
             <input type="number" name="num-comments" min="0" value ="0">
             <br/>
             <input type="submit"/>
         </form> 
+        <div>
+        </div>
 
         <div>
             <p>Site Comments:</p>
