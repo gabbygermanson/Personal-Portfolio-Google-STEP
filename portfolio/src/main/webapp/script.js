@@ -52,28 +52,33 @@ function getComments() {
 
         var index = 0;
         comments.forEach((comment) => {
-            historyUL.appendChild(createListElement(comment, imageURLS[index]));
+            historyUL.appendChild(createListComment(comment));
+            historyUL.appendChild(createListImage(imageURLS[index]));
             index++;
         });
     });
 }
  
-/** Creates an <img> list item element containing image. */
-function createListElement(text, url) {
-    console.log("Comment is: " + text + " and url is: " + url);
+/** Creates an comment list element. */
+function createListComment(text) {
     const liElement = document.createElement('li');
     liElement.innerText = text;
-
-    var attribute1 = document.createAttribute("style");
-    attribute1.value = "list-style-image: url('" + url + "')";
-
-    var attribute2 = document.createAttribute("style");
-    attribute2.value = "text-align: center";
-
-    liElement.setAttributeNode(attribute1);
-    liElement.setAttributeNode(attribute2); 
     return liElement;
 }
+
+/** Creates an <img> list element. */
+function createListImage(url) {
+    const liElement = document.createElement('li');
+    if (url == null) {
+        liElement.innerText = "No Image Submitted"
+    } else {
+        var imgElement = document.createElement("img");
+        imgElement.setAttribute("src", url);
+        liElement.appendChild(imgElement)
+    }
+    return liElement;
+}
+
 
 /** Removes any current li elements on the page and fetches DeleteDataServlet to rid Datastore data. */
 async function deleteComments() {    

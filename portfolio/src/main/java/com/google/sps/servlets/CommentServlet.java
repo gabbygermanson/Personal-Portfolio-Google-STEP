@@ -71,7 +71,7 @@ public class CommentServlet extends HttpServlet {
         List<String> commentsAndImageURLs = new ArrayList<>();
         commentsAndImageURLs.addAll(allComments);
         commentsAndImageURLs.addAll(allImageURLs);
-
+        
         response.setContentType("application/json;");
         Gson gson = new Gson();
         response.getWriter().println(gson.toJson(commentsAndImageURLs));
