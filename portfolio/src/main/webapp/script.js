@@ -42,17 +42,37 @@ function getFunFact() {
  
 /** Builds Unordered List of site comment history */
 function getComments() {
-    const historyUL = document.getElementById('commentHistory');
-    siteComments.forEach((line) => {
-        historyUL.appendChild(createListElement(line));
+    fetch('/comments').then(response => response.json()).then((allCommentsImages) => {       
+        var halfLength = allCommentsImages.length / 2;
+
+        var comments = allCommentsImages.slice(0, halfLength);
+        var imageURLS = allCommentsImages.slice(halfLength)
+        
+        const historyUL = document.getElementById('commentHistory');
+
+        var index = 0;
+        comments.forEach((comment) => {
+            historyUL.appendChild(createListElement(comment, imageURLS[index]));
+            index++;
+        });
     });
 }
  
-/** Creates an <li> list item element containing text. */
-function createListElement(text) {
-  const liElement = document.createElement('li');
-  liElement.innerText = text;
-  return liElement;
+/** Creates an <img> list item element containing image. */
+function createListElement(text, url) {
+    console.log("Comment is: " + text + " and url is: " + url);
+    const liElement = document.createElement('li');
+    liElement.innerText = text;
+
+    var attribute1 = document.createAttribute("style");
+    attribute1.value = "list-style-image: url('" + url + "')";
+
+    var attribute2 = document.createAttribute("style");
+    attribute2.value = "text-align: center";
+
+    liElement.setAttributeNode(attribute1);
+    liElement.setAttributeNode(attribute2); 
+    return liElement;
 }
 
 /** Removes any current li elements on the page and fetches DeleteDataServlet to rid Datastore data. */
@@ -64,7 +84,7 @@ async function deleteComments() {
         list.removeChild(list.firstChild);
     }
     let response = await fetch('/delete-data', {method: 'POST'});
-    fetchFactsComments(0);
+    getComments();
 }
   
 

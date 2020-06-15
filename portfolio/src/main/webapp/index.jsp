@@ -29,7 +29,7 @@ limitations under the License.
         <script src="script.js"></script>
     </head>
  
-    <body onload="fetchFactsComments(0)">
+    <body onload="getComments()">
  
     <div id="content">
         <div class="text-container">
@@ -83,7 +83,6 @@ limitations under the License.
         <br>
         <form method="POST" action="<%= uploadUrl %>" enctype="multipart/form-data">
             
-            <p>Here is the uploadUrl created by Blobstore: <%= uploadUrl %></p>
             <p>Post a Site Comment with a Corresponding Image:</p>
             <textarea name="text-input">Write comment here</textarea>
             <p>Upload an image:</p>
