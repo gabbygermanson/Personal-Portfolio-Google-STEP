@@ -94,12 +94,9 @@ limitations under the License.
             <input type="submit"/>
         </form> 
         <div>
-        </div>
-
-        <div>
             <p>Site Comments:</p>
-            <ul id="commentHistory"></ul>
             <button class="deleteButton" onclick="deleteComments()">Delete Comments</button>
+            <ul id="commentHistory"></ul>
         </div>
         </div>
     </div>
