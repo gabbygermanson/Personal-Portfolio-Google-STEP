@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --%>
 
+<%@ page isErrorPage="true" %>
+
 <%-- Create Blobstore upload URL which will direct to --%>
 <%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
 <%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
