@@ -88,7 +88,7 @@ async function deleteComments() {
     while (list.hasChildNodes()) {
         list.removeChild(list.firstChild);
     }
-    let response = await fetch('/delete-data', {method: 'POST'});
+    var response = await fetch('/delete-data', {method: 'POST'});
     getComments();
 }
   
