@@ -24,6 +24,7 @@ public final class TimeRange {
   public static final int START_OF_DAY = getTimeInMinutes(0, 0);
   public static final int END_OF_DAY = getTimeInMinutes(23, 59);
   public static final TimeRange WHOLE_DAY = new TimeRange(0, 24 * 60);
+  public static final int MINUTES_WHOLE_DAY = 24 * 60;
 
   private final int start;
   private final int duration;

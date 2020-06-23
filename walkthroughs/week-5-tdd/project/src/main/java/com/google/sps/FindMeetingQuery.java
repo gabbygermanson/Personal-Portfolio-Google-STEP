@@ -25,7 +25,7 @@ import java.util.Set;
 public final class FindMeetingQuery {
 
     public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-        if (request.getDuration() > (24 * 60)) {
+        if (request.getDuration() > TimeRange.MINUTES_WHOLE_DAY) {
             // Meeting request duration must be less than a day
             return new ArrayList<>();
         } else if (events.size() == 0) {
