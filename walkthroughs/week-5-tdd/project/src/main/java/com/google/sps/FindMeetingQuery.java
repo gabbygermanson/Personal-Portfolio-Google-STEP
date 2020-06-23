@@ -23,129 +23,33 @@ import java.util.Iterator;
 import java.util.Set;
 
 public final class FindMeetingQuery {
-    
-    public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-        ArrayList<TimeRange> timesWithOptionals = new ArrayList<>();
-        ArrayList<TimeRange> timesNoOptionals = new ArrayList<>();
-        timesWithOptionals.add(TimeRange.WHOLE_DAY);
-        timesNoOptionals.add(TimeRange.WHOLE_DAY);
 
+    public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
         if (request.getDuration() > (24 * 60)) {
+            // Meeting request duration must be less than a day
             return new ArrayList<>();
         } else if (events.size() == 0) {
-            return timesWithOptionals;
+            // The entire day is available for a requested meeting if attendees have no scheduled events
+            return new ArrayList<>(Arrays.asList(TimeRange.WHOLE_DAY));
         }
 
+        // Initialize meeting requesters for both with and without optional attendees
         Collection<String> requestersWithOptionals = new ArrayList<>();
         requestersWithOptionals.addAll(request.getAttendees());
         requestersWithOptionals.addAll(request.getOptionalAttendees());
         Collection<String> requestersNoOptionals = new ArrayList<>();
         requestersNoOptionals.addAll(request.getAttendees());
 
-        ArrayList<Event> eventsWithOptionals = new ArrayList<>(events);
-        ArrayList<Event> eventsNoOptionals = new ArrayList<>(events);
+        // Initialize scheduled event list, each having at least one of the meeting requesters
+        ArrayList<Event> eventsWithOptionals = ridIrrelevantEvents(new ArrayList<>(events), requestersWithOptionals);
+        ArrayList<Event> eventsNoOptionals = ridIrrelevantEvents(new ArrayList<>(events), requestersNoOptionals);
 
-        ArrayList<Event> currEventList = eventsWithOptionals;
-        Collection<String> currRequesters = requestersWithOptionals;
-        int eventsLength = eventsWithOptionals.size();
-        for (int i = 0; i < 2; i++) {
-            if (i == 1) {
-                currEventList = eventsNoOptionals;
-                currRequesters = requestersNoOptionals;
-                eventsLength = eventsNoOptionals.size();
-            }
-            for (int eventsIndex = 0; eventsIndex < eventsLength; eventsIndex++) {
-                Event currEvent = currEventList.get(eventsIndex);
-                Set<String> currEventAttendees = currEvent.getAttendees();
-                
-                boolean relevantEvent = false;
-                for (String person : currEventAttendees) {
-                    if (currRequesters.contains(person)) {
-                        relevantEvent = true;
-                    }
-                }
-                if (!relevantEvent) {
-                    currEventList.remove(currEvent);
-                    eventsIndex--;
-                    eventsLength--;
-                }
-                
-            }
-        }
+        // Initialize available meeting times for both required attendees with and without optional attendees
+        ArrayList<TimeRange> timesWithOptionals = findAvailableMeetingTimes(new ArrayList<>(Arrays.asList(TimeRange.WHOLE_DAY)), eventsWithOptionals);
+        ArrayList<TimeRange> timesNoOptionals = findAvailableMeetingTimes(new ArrayList<>(Arrays.asList(TimeRange.WHOLE_DAY)), eventsNoOptionals);
 
-        ArrayList<Event> eventsList = eventsWithOptionals;
-        ArrayList<TimeRange> timesFreeList = timesWithOptionals;
-        int length = timesWithOptionals.size();
-        for (int j = 0; j < 2; j++) {
-            if (j == 1) {
-                eventsList = eventsNoOptionals;
-                timesFreeList = timesNoOptionals;
-                length = timesNoOptionals.size();
-            }
-
-            for (Event event : eventsList) {
-                for (int index = 0; index < length; index++) {
-                    TimeRange freeTime = timesFreeList.get(index);
-                    boolean includeEnd = false;
-
-                    if (freeTime.overlaps(event.getWhen())) {
-
-                        if (freeTime.contains(event.getWhen())) {  // Free time completely contains event time range
-
-                            if (freeTime.equals(event.getWhen())) {
-                                // Handled at end of overlapping if statement. Case is present for reader understanding
-                            } else if (freeTime.end() == event.getWhen().end()) {
-                                TimeRange shorterBeforeFree = TimeRange.fromStartEnd(freeTime.start(), event.getWhen().start(), includeEnd);
-                                timesFreeList.add(shorterBeforeFree);
-                                length++;
-                            } else if (freeTime.start() == event.getWhen().start()) {
-                                if (freeTime.end() == TimeRange.END_OF_DAY) {
-                                    includeEnd = true;
-                                }
-                                TimeRange shorterAfterFree = TimeRange.fromStartEnd(event.getWhen().end(), freeTime.end(), includeEnd);
-                                timesFreeList.add(shorterAfterFree);
-                                length++;
-                            } else {
-                                TimeRange shorterBeforeFree = TimeRange.fromStartEnd(freeTime.start(), event.getWhen().start(), includeEnd);
-                                if (freeTime.end() == TimeRange.END_OF_DAY) {
-                                    includeEnd = true;
-                                }                            
-                                TimeRange shorterAfterFree = TimeRange.fromStartEnd(event.getWhen().end(), freeTime.end(), includeEnd);
-                                timesFreeList.add(shorterBeforeFree);
-                                timesFreeList.add(shorterAfterFree);
-                                length += 2;                             
-                            }
-                        } else if ((event.getWhen()).contains(freeTime)) {  // Event completely contains free time range
-                            // Handled at end of overlapping if statement. Case is present for reader understanding
-                        } else {  // Partial overlap between event and free time ranges
-                            if (freeTime.start() < event.getWhen().start()) {
-                                TimeRange shorterBeforeFree = TimeRange.fromStartEnd(freeTime.start(), event.getWhen().start(), includeEnd);
-                                timesFreeList.add(shorterBeforeFree);
-                            } else {
-                                if (freeTime.end() == TimeRange.END_OF_DAY) {
-                                    includeEnd = true;
-                                }                           
-                                TimeRange shorterAfterFree = TimeRange.fromStartEnd(event.getWhen().end(), freeTime.end(), includeEnd);
-                                timesFreeList.add(shorterAfterFree);
-                            }
-                            length++;
-                        }
-                        timesFreeList.remove(freeTime);
-                        length--;
-                        index--;
-                    }
-                }
-            }
-
-            for (int k = 0; k < timesFreeList.size(); k++) {
-                TimeRange foundFreeTime = timesFreeList.get(k);
-                if (foundFreeTime.duration() < request.getDuration()) {
-                    timesFreeList.remove(foundFreeTime);
-                }
-            }
-
-            Collections.sort(timesFreeList, TimeRange.ORDER_BY_START);
-        }
+        removeShortTimesSort(timesWithOptionals, request);
+        removeShortTimesSort(timesNoOptionals, request);
 
         if (timesWithOptionals.size() == 0) {
             if (requestersNoOptionals.size() == 0) {
@@ -157,4 +61,113 @@ public final class FindMeetingQuery {
         return timesWithOptionals;
     }
 
+    /**
+    * Remove events from the query's scheduled event list that do not have any of the meeting requesters
+    * @param scheduledList the query's scheduled event list being handled
+    * @param meetingRequesters the people who want to schedule a meeting
+    * @return list of events with at least one meeting requester as an attendee
+    */
+    ArrayList<Event> ridIrrelevantEvents(ArrayList<Event> scheduledList, Collection<String> meetingRequesters) {
+        int lengthScheduledList = scheduledList.size();
+        for (int indexEvents = 0; indexEvents < lengthScheduledList; indexEvents++) {
+            Event scheduledEvent = scheduledList.get(indexEvents);
+            Set<String> scheduledAttendees = scheduledEvent.getAttendees();
+
+            boolean relevantEvent = false;
+            for (String attendee : scheduledAttendees) {
+                if (meetingRequesters.contains(attendee)) {
+                    relevantEvent = true;
+                }
+            }
+            if (!relevantEvent) {
+                scheduledList.remove(scheduledEvent);
+                indexEvents--;
+                lengthScheduledList--;
+            }
+        }
+        return scheduledList;
+    }
+
+    /**
+    * Find the available times to meet across each requester's events
+    * @param availableTimesList current list of available times to meet
+    * @param scheduledEventList list of all requester's scheduled events
+    * @return list of possible times for requesters to meet
+    */
+    ArrayList<TimeRange> findAvailableMeetingTimes(ArrayList<TimeRange> availableTimesList, ArrayList<Event> scheduledEventList) {
+        int lengthAvailableTimes = availableTimesList.size();
+
+        for (Event eventScheduled : scheduledEventList) {
+
+            for (int indexAvailableTime = 0; indexAvailableTime < lengthAvailableTimes; indexAvailableTime++) {
+                TimeRange availableTime = availableTimesList.get(indexAvailableTime);
+                boolean includeEndTime = false;
+
+                if (availableTime.overlaps(eventScheduled.getWhen())) {
+                    if (availableTime.equals(eventScheduled) || (eventScheduled.getWhen()).contains(availableTime)) {
+                        // Remove availableTime from availableTimeList handled after if statement block
+                    } else if (availableTime.contains(eventScheduled.getWhen())) {
+                        // availableTime entirely contains eventScheduled time range
+
+                        if (availableTime.end() == eventScheduled.getWhen().end()) {
+                            // Both availableTime and eventScheduled end at same time
+                            availableTimesList.add(TimeRange.fromStartEnd(availableTime.start(), eventScheduled.getWhen().start(), includeEndTime));
+                            lengthAvailableTimes++;
+                        } else if (availableTime.start() == eventScheduled.getWhen().start()) {
+                            // Both availableTime and eventScheduled start at same time
+                            if (availableTime.end() == TimeRange.END_OF_DAY) {
+                                includeEndTime = true;
+                            }
+                            availableTimesList.add(TimeRange.fromStartEnd(eventScheduled.getWhen().end(), availableTime.end(), includeEndTime));
+                            lengthAvailableTimes++;
+                        } else {
+                            // eventScheduled lies within availableTime
+                            if (availableTime.end() == TimeRange.END_OF_DAY) {
+                                includeEndTime = true;
+                            }
+                            availableTimesList.add(TimeRange.fromStartEnd(availableTime.start(), eventScheduled.getWhen().start(), includeEndTime));
+                            availableTimesList.add(TimeRange.fromStartEnd(eventScheduled.getWhen().end(), availableTime.end(), includeEndTime));
+                            lengthAvailableTimes += 2;
+                        }
+                    } else { 
+                        // Partial overlap between availableTime and eventScheduled
+                        if (availableTime.start() < eventScheduled.getWhen().start()) {
+                            // availableTime starts before eventSchedule
+                            availableTimesList.add(TimeRange.fromStartEnd(availableTime.start(), eventScheduled.getWhen().start(), includeEndTime));
+                        } else {
+                            // eventSchedule starts before availableTime
+                            if (availableTime.end() == TimeRange.END_OF_DAY) {
+                                includeEndTime = true;
+                            }
+                            availableTimesList.add(TimeRange.fromStartEnd(eventScheduled.getWhen().end(), availableTime.end(), includeEndTime));
+                        }
+                        lengthAvailableTimes++;
+                    }
+
+                    availableTimesList.remove(availableTime);
+                    lengthAvailableTimes--;
+                    indexAvailableTime--;
+                }
+            }
+        }
+
+        return availableTimesList;
+    }
+
+    /**
+    * Take out times with a shorter duration than requested meeting duration, then sort
+    * @param freeTimesList current list of available times to meet
+    * @param request requester's request of a meeting of a certain duration and attendee list
+    * @return sorted list of possible times for requesters to meet with valid duration
+    */
+    ArrayList<TimeRange> removeShortTimesSort(ArrayList<TimeRange> freeTimesList, MeetingRequest request) {
+        for (int indexFreeTime = 0; indexFreeTime < freeTimesList.size(); indexFreeTime++) {
+            TimeRange freeTime = freeTimesList.get(indexFreeTime);
+            if (freeTime.duration() < request.getDuration()) {
+                freeTimesList.remove(freeTime);
+            }
+        }
+        Collections.sort(freeTimesList, TimeRange.ORDER_BY_START);
+        return freeTimesList;
+    }
 }

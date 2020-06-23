@@ -33,23 +33,23 @@ public final class TimeRange {
     this.duration = duration;
   }
 
-  /**Returns the start of the range in minutes.*/
+  /** Returns the start of the range in minutes.*/
   public int start() {
     return start;
   }
 
-  /**Returns the number of minutes between the start and end.*/
+  /** Returns the number of minutes between the start and end.*/
   public int duration() {
     return duration;
   }
 
-  /**Returns the end of the range. This ending value is the closing exclusive bound.*/
+  /** Returns the end of the range. This ending value is the closing exclusive bound.*/
   public int end() {
     return start + duration;
   }
 
 
-  /**A comparator for sorting ranges by their START time in ascending order.*/
+  /** A comparator for sorting ranges by their START time in ascending order.*/
   public static final Comparator<TimeRange> ORDER_BY_START = new Comparator<TimeRange>() {
     @Override
     public int compare(TimeRange a, TimeRange b) {
@@ -57,7 +57,7 @@ public final class TimeRange {
     }
   };
 
-  /**A comparator for sorting ranges by their END time in ascending order.*/
+  /** A comparator for sorting ranges by their END time in ascending order.*/
   public static final Comparator<TimeRange> ORDER_BY_END = new Comparator<TimeRange>() {
     @Override
     public int compare(TimeRange a, TimeRange b) {
@@ -66,7 +66,7 @@ public final class TimeRange {
   };
 
 
-  /**Checks if two ranges overlap. This means that at least some part of one range falls within the bounds of another range.*/
+  /** Checks if two ranges overlap. This means that at least some part of one range falls within the bounds of another range.*/
     // For two ranges to overlap, one range must contain the start of another range.
     // Case 1: |---| |---|
     // Case 2: |---|
