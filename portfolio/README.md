@@ -6,3 +6,4 @@ command:
 ```bash
 mvn package appengine:run
 ```
+mvn package appengine:deploy to deploy the site
