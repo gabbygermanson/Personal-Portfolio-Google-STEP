@@ -47,7 +47,7 @@
         <version>2.2.0</version>
         <configuration>
           <!-- TODO: set project ID. -->
-          <deploy.projectId>gbgermanson-step</deploy.projectId>
+          <deploy.projectId>optical-highway-257015</deploy.projectId>
           <deploy.version>1</deploy.version>
         </configuration>
       </plugin>
